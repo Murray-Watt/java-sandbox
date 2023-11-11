@@ -38,7 +38,6 @@ class LocalFileSystemClientTest extends TestBase {
     void tearDown() {
     }
 
-
     @Test
     void getsRootPaths() {
         List<String> roots = Arrays.stream(File.listRoots()).map(File::getAbsolutePath).collect(Collectors.toList());
