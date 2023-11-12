@@ -3,7 +3,7 @@ package services.filesystem.local;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mwatt.domain.LazyImpl;
+import org.mwatt.domain.Lazy;
 import org.mwatt.services.filesystem.local.LocalFileSystemClient;
 import org.mwatt.utilities.TestBase;
 
@@ -24,7 +24,7 @@ class LocalFileSystemClientTest extends TestBase {
         LocalFileSystemClient subject;
 
         protected Fixture() {
-            subject = new LazyImpl<>(LocalFileSystemClient::create).get();
+            subject = new Lazy<>(LocalFileSystemClient::create).get();
         }
     }
 
