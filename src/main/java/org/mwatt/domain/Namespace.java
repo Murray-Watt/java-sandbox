@@ -1,7 +1,6 @@
 package org.mwatt.domain;
 
 import lombok.Getter;
-import lombok.Setter;
 
 import java.util.Optional;
 
@@ -13,7 +12,7 @@ public class Namespace {
     private String leafName;
 
     @Getter
-    private String seperator = "/";
+    private String separator = "/";
 
     public Namespace(String leafName) {
         this.parent = Optional.empty();
@@ -26,10 +25,8 @@ public class Namespace {
     }
 
     public String getFullName() {
-        if (parent.isPresent()) {
-            return parent.get().getFullName() + "/" + leafName;
-        } else {
-            return leafName;
-        }
+        return parent
+                .map(namespace -> namespace.getFullName() + separator + leafName)
+                .orElseGet(() -> separator + leafName);
     }
 }
