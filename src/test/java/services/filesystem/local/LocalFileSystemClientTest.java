@@ -1,8 +1,10 @@
-package org.mwatt.local;
+package services.filesystem.local;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mwatt.domain.LazyImpl;
+import org.mwatt.services.filesystem.local.LocalFileSystemClient;
 import org.mwatt.utilities.TestBase;
 
 import java.io.File;
@@ -22,7 +24,7 @@ class LocalFileSystemClientTest extends TestBase {
         LocalFileSystemClient subject;
 
         protected Fixture() {
-            subject = new LocalFileSystemClient();
+            subject = new LazyImpl<>(LocalFileSystemClient::create).get();
         }
     }
 
@@ -71,6 +73,14 @@ class LocalFileSystemClientTest extends TestBase {
     }
 
     @Test
+    void getEmptyFolders() throws IOException {
+        String tmpDir = Files.createTempDirectory("test").toFile().getAbsolutePath();
+
+        Set<String> subFolders = fixture.subject.getSubFolders(tmpDir);
+        assertTrue(subFolders.isEmpty(), "Sub folders should be empty");
+    }
+
+    @Test
     void getsSubFoldersThrowsIfParentDirectoryDoesNotExist() {
         String parentFolder = "does-not-exist-" + UUID.randomUUID();
 
@@ -94,5 +104,19 @@ class LocalFileSystemClientTest extends TestBase {
 
         String nonExistentFolder = tmpDirsLocation + "does-not-exist-" + UUID.randomUUID();
         assertFalse(fixture.subject.folderExists(nonExistentFolder),"folder exists returned true for a directory/file that does not exist");
+    }
+
+    @Test
+    void doesFileExist() throws IOException {
+        String tmpFile = System.getProperty("java.io.tmpdir") + "does-not-exist-" + UUID.randomUUID();
+        assertFalse(fixture.subject.assetExists(tmpFile),"file exists returned true for a file that does not exist");
+
+        String filePath = Files.createTempFile("test", ".txt").toFile().getAbsolutePath();
+
+        assertTrue(fixture.subject.assetExists(filePath),"file exists returned false for a file that exists");
+
+        String tmpdir2 = Files.createTempDirectory("test").toFile().getAbsolutePath();
+
+        assertFalse(fixture.subject.assetExists(tmpdir2),"file exists returned true for a directory that exists");
     }
 }

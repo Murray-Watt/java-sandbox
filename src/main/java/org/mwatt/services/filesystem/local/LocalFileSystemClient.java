@@ -1,20 +1,20 @@
-package org.mwatt.local;
+package org.mwatt.services.filesystem.local;
 
 import org.mwatt.domain.FileSystemNativeClient;
 
 import java.io.File;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class LocalFileSystemClient implements FileSystemNativeClient {
+
+    static public LocalFileSystemClient create() {
+        return new LocalFileSystemClient();
+    }
+
     public Set<String> getRootFolders() {
         List<File> roots = Arrays.asList(File.listRoots());
-        Set<String> rootFolders = roots.stream().map(f -> f.getAbsolutePath().toString()).collect(Collectors.toSet());
-
-        return rootFolders;
+        return roots.stream().map(File::getAbsolutePath).collect(Collectors.toSet());
     }
 
     public Set<String> getSubFolders(String parentFolder) {
@@ -25,14 +25,18 @@ public class LocalFileSystemClient implements FileSystemNativeClient {
             throw new IllegalArgumentException(String.format("Parent folder %s does not exist", parentFolder));
         }
 
-        List<File> directories = Arrays.asList(parentDirectory.listFiles(File::isDirectory));
-        Set<String> subFolders = directories.stream().map(f -> f.getName().toString()).collect(Collectors.toSet());
-
-        return new HashSet<>(subFolders);
+        List<File> directories = Arrays.asList(Objects.requireNonNull(parentDirectory.listFiles(File::isDirectory)));
+        return directories.stream().map(File::getName).collect(Collectors.toSet());
     }
 
     public boolean folderExists(String folder) {
         File directory = new File(folder);
-        return directory.isDirectory() && directory.exists();
+        return directory.isDirectory();
+    }
+
+    @Override
+    public boolean assetExists(String assetFullName) {
+        File asset = new File(assetFullName);
+        return asset.isFile();
     }
 }
