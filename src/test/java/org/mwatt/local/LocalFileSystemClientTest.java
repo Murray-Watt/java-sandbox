@@ -39,7 +39,7 @@ class LocalFileSystemClientTest extends TestBase {
     }
 
     @Test
-    void getsRootPaths() {
+    void getsRootFolders() {
         List<String> roots = Arrays.stream(File.listRoots()).map(File::getAbsolutePath).collect(Collectors.toList());
 
         Set<String> rootFolders = fixture.subject.getRootFolders();
@@ -80,5 +80,19 @@ class LocalFileSystemClientTest extends TestBase {
         } catch (IllegalArgumentException exception) {
             assertEquals(String.format("Parent folder %s does not exist", parentFolder), exception.getMessage(), "Exception message does not match");
         }
+    }
+
+    @Test
+    void doesFolderExists() throws IOException {
+        String tmpDirsLocation = System.getProperty("java.io.tmpdir");
+        String tmpdir = Files.createTempDirectory("test").toFile().getAbsolutePath();
+
+        assertTrue(fixture.subject.folderExists(tmpdir),"folder exists returned false for a directory exists");
+
+        String file = Files.createTempFile("test", ".txt").toFile().getAbsolutePath();
+        assertFalse(fixture.subject.folderExists(file),"folder exists returned true for a file that exists");
+
+        String nonExistentFolder = tmpDirsLocation + "does-not-exist-" + UUID.randomUUID();
+        assertFalse(fixture.subject.folderExists(nonExistentFolder),"folder exists returned true for a directory/file that does not exist");
     }
 }

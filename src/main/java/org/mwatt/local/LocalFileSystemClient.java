@@ -22,12 +22,17 @@ public class LocalFileSystemClient implements FileSystemNativeClient {
         File parentDirectory = new File(parentFolder);
 
         if (!parentDirectory.exists()) {
-            return new HashSet<>();
+            throw new IllegalArgumentException(String.format("Parent folder %s does not exist", parentFolder));
         }
 
         List<File> directories = Arrays.asList(parentDirectory.listFiles(File::isDirectory));
         Set<String> subFolders = directories.stream().map(f -> f.getName().toString()).collect(Collectors.toSet());
 
         return new HashSet<>(subFolders);
+    }
+
+    public boolean folderExists(String folder) {
+        File directory = new File(folder);
+        return directory.isDirectory() && directory.exists();
     }
 }
