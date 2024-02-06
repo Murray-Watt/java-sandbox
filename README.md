@@ -1,9 +1,9 @@
 # java-sandbox
 For prototyping code
 
-## Dependencies
+This repository I use for experimental code before creating a project
 
-I am currently using amazon corretto 11 as my JDK. I am not adverse to using other JDKs, but I am not highly motivated to do so.
+## Dependencies
 
 * Apache Log4j 2 is used for logging.  It is a compile time dependency only.  
 * The IDE needs to be configured to use it.
